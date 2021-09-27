@@ -1,0 +1,52 @@
+body {
+    background-color: lightgrey;
+}
+
+a {
+    color: #676767;
+}
+
+a:hover {
+    color: lightskyblue;
+}
+
+aside {
+    background-color: white;
+    height: 100%;
+    width: 260px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 5px 0 10px 0 rgba(0, 0, 0, 0.5);
+}
+
+aside img {
+    border-radius: 50%;
+    margin: 10%;
+    width: 80%;
+}
+
+nav a {
+    padding: .75em 1em .75em 2.5em;
+    display: block;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 13px 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+footer div {
+    justify-content: center;
+    display: flex;
+}
+
+footer a {
+    margin: 14px;
+}
