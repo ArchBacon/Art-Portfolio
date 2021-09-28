@@ -17,15 +17,15 @@ final class ContactController extends AbstractController
     public function index(Request $request): Response
     {
         $message = new Message();
-
         $form = $this->createForm(ContactType::class, $message);
-
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $message = $form->getData();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($message);
+            $entityManager->flush();
 
-            //TODO: Flush to DB
-
+            // TODO: Redirect to thank you for message page
             return $this->redirectToRoute('portfolio');
         }
 
