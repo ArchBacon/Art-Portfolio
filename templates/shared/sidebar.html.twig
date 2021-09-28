@@ -6,6 +6,11 @@
         <a href="{{ path('portfolio') }}">Portfolio</a>
         <a href="{{ path('about') }}">About</a>
         <a href="{{ path('contact') }}">Contact</a>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="#">Admin</a>
+            <a href="{{ path('app_logout') }}">Logout</a>
+        {% endif %}
     </nav>
     <footer>
         <div>
