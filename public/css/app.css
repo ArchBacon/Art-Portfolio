@@ -79,3 +79,10 @@ main {
     grid-column-end: span 2;
     grid-row-end: span 2;
 }
+
+hr {
+    width: 80%;
+    height: 1px;
+    border: none;
+    background-color: #676767;
+}

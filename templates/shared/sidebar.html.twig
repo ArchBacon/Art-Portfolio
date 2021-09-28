@@ -8,15 +8,16 @@
         <a href="{{ path('contact') }}">Contact</a>
 
         {% if is_granted('ROLE_ADMIN') %}
+            <hr>
             <a href="#">Admin</a>
             <a href="{{ path('app_logout') }}">Logout</a>
         {% endif %}
     </nav>
     <footer>
         <div>
-            <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
-            <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://twitter.com/"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.instagram.com/milonekos"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.reddit.com/u/Nevir-Kelpie"><i class="fab fa-reddit-alien"></i></a>
+            <a href="https://twitter.com/MiloOctavios"><i class="fab fa-twitter"></i></a>
         </div>
     </footer>
 </aside>

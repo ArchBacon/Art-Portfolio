@@ -25,12 +25,17 @@ final class ContactController extends AbstractController
             $entityManager->persist($message);
             $entityManager->flush();
 
-            // TODO: Redirect to thank you for message page
-            return $this->redirectToRoute('portfolio');
+            return $this->redirectToRoute('contact.thankyou');
         }
 
         return $this->renderForm('contact/index.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    #[Route('/contact/thankyou', name: 'contact.thankyou')]
+    public function thankyou(Request $request): Response
+    {
+        return $this->renderForm('contact/thankyou.html.twig');
     }
 }
