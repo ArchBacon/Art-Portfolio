@@ -39,6 +39,10 @@ final class SecurityController extends AbstractController
     #[Route('/register', name: 'register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasherInterface): Response
     {
+        if ($this->getParameter('app.env') == 'prod') {
+            throw $this->createNotFoundException();
+        }
+
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
