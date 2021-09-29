@@ -9,7 +9,7 @@
 
         {% if is_granted('ROLE_ADMIN') %}
             <hr>
-            <a href="#">Admin</a>
+            <a href="{{ path('admin') }}">Admin</a>
             <a href="{{ path('logout') }}">Logout</a>
         {% endif %}
     </nav>
