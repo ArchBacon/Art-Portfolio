@@ -1,5 +1,12 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
-    background-color: lightgrey;
+    background-color: #D3D3D3FF;
+    margin: 0;
+    padding: 0;
+    padding-left: 260px;
 }
 
 a {
@@ -7,17 +14,18 @@ a {
 }
 
 a:hover {
-    color: lightskyblue;
+    color: #87CEFAFF;
 }
 
 aside {
-    background-color: white;
+    background-color: #ffffff;
     height: 100%;
     width: 260px;
     position: fixed;
     top: 0;
     left: 0;
     box-shadow: 5px 0 10px 0 rgba(0, 0, 0, 0.5);
+    z-index: 1;
 }
 
 aside img {
@@ -51,10 +59,6 @@ footer a {
     margin: 14px;
 }
 
-main {
-    margin-left: 260px;
-}
-
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -76,8 +80,8 @@ main {
 }
 
 .span-2 {
-    grid-column-end: span 2;
-    grid-row-end: span 2;
+    grid-column: span 2;
+    grid-row: span 2;
 }
 
 hr {
@@ -85,4 +89,62 @@ hr {
     height: 1px;
     border: none;
     background-color: #676767;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 5px 5px 10px 0 rgba(0, 0, 0, .8);
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.row {
+    display: flex;
+    flex-flow: row;
+    height: 100%;
+}
+
+.column {
+    float: left;
+    width: 50%;
+    flex-grow: 1;
+    margin: 10px;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+main {
+    padding: 20px;
+}
+
+.contact {
+    max-width: 860px;
+    /*margin: auto;*/
+}
+
+textarea {
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 209px;
+    max-height: 209px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+@media screen and (max-width: 960px) {
+    .row {
+        display: inherit;
+        height: auto;
+    }
+
+    .column {
+        width: 100%;
+    }
 }

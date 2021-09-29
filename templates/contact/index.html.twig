@@ -3,5 +3,13 @@
 {% block title %}Contact - SiteName{% endblock %}
 
 {% block body %}
-    {{ form(form) }}
+    <div class="row contact">
+        <div class="column card">
+            {% include 'shared/contact_form.html.twig' with {contact_form: contact_form} only %}
+        </div>
+        <div class="column">
+            <div class="card mb-20">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue condimentum neque, non aliquam quam rutrum nec. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Duis eget tempus mauris, nec tempor ligula. Fusce efficitur diam iaculis, convallis ante dapibus, tincidunt nibh.</div>
+            <div class="card">Sed purus arcu, mattis sed cursus quis, lacinia ut ante. Morbi metus nisl, fermentum in dolor vel, auctor feugiat velit. Aenean ac libero nisl. Phasellus vestibulum lectus lorem, a eleifend purus ultrices ac. Sed volutpat congue dui vitae egestas. Quisque ut scelerisque orci.</div>
+        </div>
+    </div>
 {% endblock %}
