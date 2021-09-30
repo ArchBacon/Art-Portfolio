@@ -17,3 +17,5 @@
 ###< phpstorm ###
 .idea
 ###< phpstorm ###
+
+/public/images/uploads
