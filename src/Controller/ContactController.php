@@ -28,8 +28,8 @@ final class ContactController extends AbstractController
             return $this->redirectToRoute('contact.thankyou');
         }
 
-        return $this->renderForm('contact/index.html.twig', [
-            'contact_form' => $form,
+        return $this->render('contact/index.html.twig', [
+            'contact_form' => $form->createView(),
         ]);
     }
 
