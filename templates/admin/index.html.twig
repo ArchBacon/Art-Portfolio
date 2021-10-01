@@ -7,13 +7,13 @@
 {% endblock %}
 
 {% block body %}
-    <ul id="filelist"></ul>
-    <br/>
-
-    <div id="container">
+    <div id="container" class="card">
         <a id="browse" href="javascript:;">[Browse...]</a>
         <a id="start-upload" href="javascript:;">[Start Upload]</a>
     </div>
+
+    <ul id="filelist" class="card"></ul>
+    <br/>
 
     <br/>
     <pre id="console"></pre>
@@ -24,7 +24,6 @@
             browse_button: 'browse',
             url: '{{ path('upload') }}',
             chunk_size: '1mb',
-            max_retries: 5,
 
             filters: {
                 mime_types: [

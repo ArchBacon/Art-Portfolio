@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,50 +25,37 @@ final class AdminController extends AbstractController
     {
         /** @var UploadedFile $file */
         $file = $request->files->get('file');
-        $fileName = $request->get('name');
+        $file_name = $request->get('name');
         $chunk = $request->get('chunk');
         $chunks = $request->get('chunks');
         $upload_dir = $this->getParameter('upload_dir');
-        $gallery = $this->getParameter('gallery');
+        $gallery_dir = $this->getParameter('gallery_dir');
 
-        $tmpFile = fopen($upload_dir . $fileName . '.blob_' . $chunk, 'wb');
+        $tmpFile = fopen($upload_dir . $file_name . '.tmp', $chunk === 0 ? "wb" : 'ab');
         if ($tmpFile === false) {
-            // TODO: Something went wrong. Couln't open or create file.
+            die('Something went wrong. Couln\'t open or create file.');
         }
 
-        fwrite(realpath($tmpFile), fopen($file->getRealPath(), 'rb'));
+        $blob = fopen($file->getRealPath(), 'rb');
+        if ($blob === false) {
+            die('Something went wrong. Couln\'t open file.');
+        }
+
+        while ($buff = fread($blob, 4096)) {
+            fwrite($tmpFile, $buff);
+        }
+
         fclose($tmpFile);
+        fclose($blob);
 
-        return new Response();
+        unlink($file->getRealPath());
 
-        rename($file->getRealPath(), $upload_dir . $fileName . '.blob.' . $chunk);
+        if ((int)$chunk === $chunks - 1) {
 
-        /** @var UploadedFile $file */
-        foreach ($request->files as $file) {
-            $out = fopen("{$upload_dir}{$request->get('name')}.part", $chunk == 0 ? 'wb' : 'ab');
-            if ($out !== false) {
-                $in = fopen($file->getRealPath(), 'rb');
-                if ($in !== false) {
-                    while ($buff = fread($in, 4096)) {
-                        fwrite($out, $buff);
-                    }
-                } else {
-                    die('{"OK": 0, "info": "Failed to open input stream."}');
-                }
-
-                fclose($in);
-                fclose($out);
-
-                unlink($file->getRealPath());
-            } else {
-                die('{"OK": 0, "info": "Failed to open output stream."}');
-            }
-
-            if ($chunk === $chunks - 1) {
-                rename(
-                    "{$upload_dir}{$request->get('name')}.part",
-                    $upload_dir . $request->get('name'));
-            }
+            rename(
+                $upload_dir . $file_name . '.tmp',
+                $gallery_dir . Uuid::uuid4() . '.' . preg_replace("#\?.*#", "", pathinfo($file_name, PATHINFO_EXTENSION))
+            );
         }
 
         return new Response();
