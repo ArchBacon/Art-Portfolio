@@ -2,19 +2,58 @@
 
 {% block title %}Hello AdminController!{% endblock %}
 
+{% block javascripts %}
+    <script src="{{ asset('js/plupload.full.min.js') }}"></script>
+{% endblock %}
+
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <ul id="filelist"></ul>
+    <br/>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div id="container">
+        <a id="browse" href="javascript:;">[Browse...]</a>
+        <a id="start-upload" href="javascript:;">[Start Upload]</a>
+    </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'L:/Projects/art-portfolio/src/Controller/AdminController.php'|file_link(0) }}">src/Controller/AdminController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'L:/Projects/art-portfolio/templates/admin/index.html.twig'|file_link(0) }}">templates/admin/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <br/>
+    <pre id="console"></pre>
+
+    <script type="text/javascript">
+        let uploader = new plupload.Uploader({
+            runtimes: 'html5',
+            browse_button: 'browse',
+            url: '{{ path('upload') }}',
+
+            filters: {
+                mime_types: [
+                    {title: "Image files", extensions: "jpg,gif,png"},
+                ]
+            },
+
+            init: {
+                PostInit: function () {
+                    // Initiate upload with upload button
+                    document.getElementById('start-upload').onclick = function () {
+                        uploader.start();
+                    };
+                },
+                FilesAdded: function (up, files) {
+                    // Add file names to the list
+                    plupload.each(files, function (file) {
+                        document.getElementById('filelist').innerHTML += '<li id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></li>';
+                    });
+                },
+                UploadProgress: function(up, file) {
+                    // Add upload percentage behind file names in the list
+                    document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+                },
+                Error: function(up, err) {
+                    // Display error, if any
+                    document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
+                },
+            }
+        });
+
+        uploader.init();
+    </script>
 {% endblock %}
