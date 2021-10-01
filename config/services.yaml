@@ -5,7 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     app.env: '%env(APP_ENV)%'
-    upload_dir: '%kernel.project_dir%\public\images\uploads\'
+    gallery: '%kernel.project_dir%\public\images\uploads\'
+    upload_dir: '%kernel.project_dir%\public\images\tmp\'
 
 services:
     # default configuration for services in *this* file
