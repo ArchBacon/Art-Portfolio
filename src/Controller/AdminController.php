@@ -98,7 +98,7 @@ final class AdminController extends AbstractController
         $tmp_img = imagecreatetruecolor($width, $height);
         imagealphablending( $tmp_img, false );
         imagesavealpha( $tmp_img, true );
-        imagecopyresampled($tmp_img, $thumb_img, 0, 0, $crop_x, (int)$crop_y, $new_width, (int)$new_height, $w, $h);
+        imagecopyresampled($tmp_img, $thumb_img, 0, 0, (int)$crop_x, (int)$crop_y, (int)$new_width, (int)$new_height, $w, $h);
 
         if ($SetFileName == false) {
             header('Content-Type: image/png');
