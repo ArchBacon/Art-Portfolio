@@ -27,7 +27,7 @@
 
             filters: {
                 mime_types: [
-                    {title: "Image files", extensions: "jpg,gif,png"},
+                    {title: "Image files", extensions: "jpg,jpeg,gif,png"},
                 ]
             },
 
@@ -44,11 +44,11 @@
                         document.getElementById('filelist').innerHTML += '<li id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></li>';
                     });
                 },
-                UploadProgress: function(up, file) {
+                UploadProgress: function (up, file) {
                     // Add upload percentage behind file names in the list
                     document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
                 },
-                Error: function(up, err) {
+                Error: function (up, err) {
                     // Display error, if any
                     document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
                 },
