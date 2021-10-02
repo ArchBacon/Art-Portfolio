@@ -28,13 +28,18 @@ final class AdminController extends AbstractController
         $file_name = $request->get('name');
         $chunk = $request->get('chunk');
         $chunks = $request->get('chunks');
-        $upload_dir = $this->getParameter('upload_dir');
-        $gallery_dir = $this->getParameter('gallery_dir');
 
-        $tmpFile = fopen($upload_dir . $file_name . '.tmp', $chunk === 0 ? "wb" : 'ab');
+        // Make slashed not OS dependant
+        $upload_dir = str_replace('\\', '/', $this->getParameter('upload_dir'));
+        $gallery_dir = str_replace('\\', '/', $this->getParameter('gallery_dir'));
+
+        /** @var https://stackoverflow.com/questions/27457921/php-unable-to-create-file $tmpFile */
+        $tmpFile = fopen($upload_dir . $file_name . '.tmp', $chunk === 0 ? 'wb' : 'ab');
         if ($tmpFile === false) {
             die('Something went wrong. Couln\'t open or create file.');
         }
+        chmod($upload_dir . $file_name . '.tmp', 0777);
+
 
         $blob = fopen($file->getRealPath(), 'rb');
         if ($blob === false) {
@@ -51,10 +56,10 @@ final class AdminController extends AbstractController
         unlink($file->getRealPath());
 
         if ((int)$chunk === $chunks - 1) {
-            $file_extension = preg_replace("#\?.*#", "", pathinfo($file_name, PATHINFO_EXTENSION));
+            $file_extension = preg_replace('#\?.*#', '', pathinfo($file_name, PATHINFO_EXTENSION));
             $unique_file_name = Uuid::uuid4() . '.' . $file_extension;
 
-            rename(
+            $rename = rename(
                 $upload_dir . $file_name . '.tmp',
                 $gallery_dir . $unique_file_name
             );
@@ -75,7 +80,7 @@ final class AdminController extends AbstractController
         return new Response();
     }
 
-    public function MakeThumb($thumb_target = '', $width = 60, $height = 60, $SetFileName = false, $quality = 8)
+    public function MakeThumb($thumb_target = '', $width = 60, $height = 60, $SetFileName = false, $quality = 8): void
     {
         $thumb_img = imagecreatefrompng($thumb_target);
 

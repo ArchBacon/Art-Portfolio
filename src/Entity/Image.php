@@ -27,7 +27,7 @@ final class Image
     public function __construct(string $name)
     {
         $this->name = $name;
-        $this->is_public = false;
+        $this->is_public = true;
         $this->created_at = new \DateTimeImmutable();
     }
 

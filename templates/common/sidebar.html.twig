@@ -7,7 +7,7 @@
         <a href="{{ path('about') }}">About</a>
         <a href="{{ path('contact') }}">Contact</a>
 
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('ROLE_USER') %}
             <hr>
             <a href="{{ path('admin') }}">Admin</a>
             <a href="{{ path('logout') }}">Logout</a>

@@ -4,20 +4,24 @@
 
 {% block body %}
     <div class="grid">
+{#        {{ dump(images) }}#}
+    </div>
+
+    <div class="grid">
         {% set big_array = [4, 8, 3, 5, 8, 9] %}
         {% set count = 0 %}
         {% set compare = 0 %}
 
-        {% for i in 0..64 %}
-            {% if i == compare %}
+        {% for key, image in images %}
+            {% if key == compare %}
                 <div class="grid-item span-2">
-                    <img src="https://picsum.photos/seed/20{{ i }}/400" alt="">
+                    <img src="images/uploads/400x400_{{ image.name }}" alt="">
                 </div>
                 {% set compare = compare + big_array[count] %}
                 {% set count = count + 1 %}
             {% else %}
                 <div class="grid-item">
-                    <img src="https://picsum.photos/seed/20{{ i }}/200" alt="">
+                    <img src="images/uploads/200x200_{{ image.name }}" alt="">
                 </div>
             {% endif %}
 
