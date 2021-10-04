@@ -16,13 +16,13 @@ final class Message
     private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private string $Name;
+    private string $name;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private string $Email;
+    private string $email;
 
     #[ORM\Column(type: 'text')]
-    private string $Message;
+    private string $message;
 
     public function getId(): ?int
     {
@@ -31,36 +31,36 @@ final class Message
 
     public function getName(): string
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setName(string $Name): self
+    public function setName(string $name): self
     {
-        $this->Name = $Name;
+        $this->name = $name;
 
         return $this;
     }
 
     public function getEmail(): string
     {
-        return $this->Email;
+        return $this->email;
     }
 
-    public function setEmail(string $Email): self
+    public function setEmail(string $email): self
     {
-        $this->Email = $Email;
+        $this->email = $email;
 
         return $this;
     }
 
     public function getMessage(): string
     {
-        return $this->Message;
+        return $this->message;
     }
 
-    public function setMessage(string $Message): self
+    public function setMessage(string $message): self
     {
-        $this->Message = $Message;
+        $this->message = $message;
 
         return $this;
     }

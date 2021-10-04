@@ -18,5 +18,5 @@
 .idea
 ###< phpstorm ###
 
-/public/images/uploads
+/public/images/gallery
 /public/images/tmp

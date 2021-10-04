@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Image;
+use App\Service\File;
+use App\Service\FileUploader;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -20,18 +22,51 @@ final class AdminController extends AbstractController
         return $this->render('admin/index.html.twig');
     }
 
+    /**
+     * @throws \Safe\Exceptions\FilesystemException
+     * @throws \Safe\Exceptions\PcreException
+     */
     #[Route('/upload', name: 'upload')]
     public function upload(Request $request): Response
     {
+        // create new file
+        // Upload blob
+        // merge blob with new file
+        // if all uploaded, move new file to gallery
+
         /** @var UploadedFile $file */
         $file = $request->files->get('file');
-        $file_name = $request->get('name');
+        $filename = $request->get('name');
         $chunk = $request->get('chunk');
         $chunks = $request->get('chunks');
+        /** @var string $uploadDir */
+        $uploadDir = $this->getParameter('upload_directory');
+        /** @var string $galleryDir */
+        $galleryDir = $this->getParameter('gallery_directory');
 
-        // Make slashed not OS dependant
-        $upload_dir = str_replace('\\', '/', $this->getParameter('upload_dir'));
-        $gallery_dir = str_replace('\\', '/', $this->getParameter('gallery_dir'));
+        // TODO: Slug filename
+        // TODO: Cannot Move on null
+        $file->move($uploadDir, $chunk . '_' . md5($filename));
+
+        if ((int)$chunk !== $chunks - 1) {
+            return new Response();
+        }
+
+        dd((int)$chunk, $chunks - 1);
+
+        $newFile = $galleryDir . '/' . uniqid('', false) . '.' . \Safe\preg_replace('#\?.*#', '', pathinfo($filename, PATHINFO_EXTENSION));
+        \Safe\touch($newFile);
+        \Safe\chmod($newFile, 0777);
+
+        $tmpFile = \Safe\fopen($newFile, 'ab');
+        foreach (\Safe\glob("*_".md5($filename)) as $filepath) {
+            \Safe\fwrite($tmpFile, \Safe\file_get_contents($filepath));
+            \Safe\unlink($filepath);
+        }
+
+        \Safe\fclose($tmpFile);
+
+        die;
 
         /** @var https://stackoverflow.com/questions/27457921/php-unable-to-create-file $tmpFile */
         $tmpFile = fopen($upload_dir . $file_name . '.tmp', $chunk === 0 ? 'wb' : 'ab');
@@ -101,8 +136,8 @@ final class AdminController extends AbstractController
 
         // I think this is where you are mainly going wrong
         $tmp_img = imagecreatetruecolor($width, $height);
-        imagealphablending( $tmp_img, false );
-        imagesavealpha( $tmp_img, true );
+        imagealphablending($tmp_img, false);
+        imagesavealpha($tmp_img, true);
         imagecopyresampled($tmp_img, $thumb_img, 0, 0, (int)$crop_x, (int)$crop_y, (int)$new_width, (int)$new_height, $w, $h);
 
         if ($SetFileName == false) {

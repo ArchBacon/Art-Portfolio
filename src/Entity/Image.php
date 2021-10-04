@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\ImageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Safe\DateTimeImmutable;
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
 final class Image
@@ -19,16 +20,16 @@ final class Image
     private string $name;
 
     #[ORM\Column(type: 'boolean')]
-    private bool $is_public;
+    private bool $isPublic;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private \DateTimeImmutable $created_at;
+    private DateTimeImmutable $createdAt;
 
     public function __construct(string $name)
     {
         $this->name = $name;
-        $this->is_public = true;
-        $this->created_at = new \DateTimeImmutable();
+        $this->isPublic = true;
+        $this->createdAt = new DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -43,18 +44,18 @@ final class Image
 
     public function getIsPublic(): ?bool
     {
-        return $this->is_public;
+        return $this->isPublic;
     }
 
-    public function setIsPublic(bool $is_public): self
+    public function setIsPublic(bool $isPublic): self
     {
-        $this->is_public = $is_public;
+        $this->isPublic = $isPublic;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 }
