@@ -8,6 +8,7 @@ use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
+#[ORM\Table(name: 'messages')]
 final class Message
 {
     #[ORM\Id]

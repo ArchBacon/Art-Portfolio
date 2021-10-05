@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ImageRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
-use Safe\DateTimeImmutable;
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
+#[ORM\Table(name: 'images')]
 final class Image
 {
     #[ORM\Id]
@@ -37,12 +38,12 @@ final class Image
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getIsPublic(): ?bool
+    public function getIsPublic(): bool
     {
         return $this->isPublic;
     }
@@ -54,7 +55,7 @@ final class Image
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeImmutable
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }

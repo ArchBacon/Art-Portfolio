@@ -4,7 +4,7 @@
 
 {% block body %}
     <div class="grid">
-{#        {{ dump(images) }}#}
+        {# {{ dump(images) }} #}
     </div>
 
     <div class="grid">
@@ -15,13 +15,13 @@
         {% for key, image in images %}
             {% if key == compare %}
                 <div class="grid-item span-2">
-                    <img src="images/uploads/400x400_{{ image.name }}" alt="">
+                    <img src="{{ asset('images/gallery/400x400_',{{ image.name|basename }}) }}" alt="images/gallery/400x400_{{ image.name|basename }}">
                 </div>
                 {% set compare = compare + big_array[count] %}
                 {% set count = count + 1 %}
             {% else %}
                 <div class="grid-item">
-                    <img src="images/uploads/200x200_{{ image.name }}" alt="">
+                    <img src="images/uploads/200x200_{{ image.name }}" alt="{{ image.name }}">
                 </div>
             {% endif %}
 

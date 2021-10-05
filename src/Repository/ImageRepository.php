@@ -29,7 +29,7 @@ final class ImageRepository extends ServiceEntityRepository
     public function findPublicImages(): array
     {
         return $this->createQueryBuilder('i')
-            ->andWhere('i.is_public = :val')
+            ->andWhere('i.isPublic = :val')
             ->setParameter('val', 1)
             ->getQuery()
             ->getResult()

@@ -46,7 +46,9 @@ final class AdminController extends AbstractController
             return new Response();
         }
 
-        $newFile = $galleryDir . '/' . uniqid('', false) . '.' . preg_replace('#\?.*#', '', pathinfo($filename, PATHINFO_EXTENSION));
+        $uniqId = uniqid('', false);
+        $extension = preg_replace('#\?.*#', '', pathinfo($filename, PATHINFO_EXTENSION));
+        $newFile = $galleryDir . '/' . $uniqId . '.' . $extension;
         touch($newFile);
         chmod($newFile, 0777);
 
@@ -58,18 +60,16 @@ final class AdminController extends AbstractController
 
         fclose($tmpFile);
 
-        return new Response();
-
         /**
          * @link https://gist.github.com/philBrown/880506
          * @link https://stackoverflow.com/questions/27350770/crop-center-square-of-image-using-imagecopyresampled/27351634
          */
 
-        $this->MakeThumb($gallery_dir . $unique_file_name, 200, 200, $gallery_dir . '200x200_' . $unique_file_name);
-        $this->MakeThumb($gallery_dir . $unique_file_name, 400, 400, $gallery_dir . '400x400_' . $unique_file_name);
+        $this->MakeThumb($newFile, 200, 200, $galleryDir . '/200x200_' . $uniqId . '.' . $extension);
+        $this->MakeThumb($newFile, 400, 400, $galleryDir . '/400x400_' . $uniqId . '.' . $extension);
 
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist(new Image($unique_file_name));
+        $entityManager->persist(new Image($newFile));
         $entityManager->flush();
 
         return new Response();
