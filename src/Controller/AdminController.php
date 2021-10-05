@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Image;
-use App\Service\File;
-use App\Service\FileUploader;
 use Ramsey\Uuid\Uuid;
+use Safe\Exceptions\FilesystemException;
+use Safe\Exceptions\PcreException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
+use function \Safe\{fopen,fclose,glob,unlink,preg_replace,touch,chmod,fwrite};
 
 final class AdminController extends AbstractController
 {
@@ -23,17 +25,12 @@ final class AdminController extends AbstractController
     }
 
     /**
-     * @throws \Safe\Exceptions\FilesystemException
-     * @throws \Safe\Exceptions\PcreException
+     * @throws FilesystemException
+     * @throws PcreException
      */
     #[Route('/upload', name: 'upload')]
     public function upload(Request $request): Response
     {
-        // create new file
-        // Upload blob
-        // merge blob with new file
-        // if all uploaded, move new file to gallery
-
         /** @var UploadedFile $file */
         $file = $request->files->get('file');
         $filename = $request->get('name');
@@ -45,72 +42,45 @@ final class AdminController extends AbstractController
         $galleryDir = $this->getParameter('gallery_directory');
 
         // TODO: Slug filename
-        // TODO: Cannot Move on null
         $file->move($uploadDir, $chunk . '_' . md5($filename));
 
         if ((int)$chunk !== $chunks - 1) {
             return new Response();
         }
 
-        dd((int)$chunk, $chunks - 1);
+        $newFile = $galleryDir . '/' . uniqid('', false) . '.' . preg_replace('#\?.*#', '', pathinfo($filename, PATHINFO_EXTENSION));
+        touch($newFile);
+        chmod($newFile, 0777);
 
-        $newFile = $galleryDir . '/' . uniqid('', false) . '.' . \Safe\preg_replace('#\?.*#', '', pathinfo($filename, PATHINFO_EXTENSION));
-        \Safe\touch($newFile);
-        \Safe\chmod($newFile, 0777);
+        $tmpFile = fopen($newFile, 'ab');
+        foreach (glob($uploadDir . "/*_" . md5($filename)) as $filepath) {
 
-        $tmpFile = \Safe\fopen($newFile, 'ab');
-        foreach (\Safe\glob("*_".md5($filename)) as $filepath) {
-            \Safe\fwrite($tmpFile, \Safe\file_get_contents($filepath));
-            \Safe\unlink($filepath);
-        }
+            $blob = fopen($filepath, 'rb');
 
-        \Safe\fclose($tmpFile);
+            $buff = fread($blob, 4096);
+            while ($buff) {
+                fwrite($tmpFile, $buff);
+            }
 
-        die;
-
-        /** @var https://stackoverflow.com/questions/27457921/php-unable-to-create-file $tmpFile */
-        $tmpFile = fopen($upload_dir . $file_name . '.tmp', $chunk === 0 ? 'wb' : 'ab');
-        if ($tmpFile === false) {
-            die('Something went wrong. Couln\'t open or create file.');
-        }
-        chmod($upload_dir . $file_name . '.tmp', 0777);
-
-
-        $blob = fopen($file->getRealPath(), 'rb');
-        if ($blob === false) {
-            die('Something went wrong. Couln\'t open file.');
-        }
-
-        while ($buff = fread($blob, 4096)) {
-            fwrite($tmpFile, $buff);
+            fclose($blob);
+            unlink($filepath);
         }
 
         fclose($tmpFile);
-        fclose($blob);
 
-        unlink($file->getRealPath());
+        return new Response();
 
-        if ((int)$chunk === $chunks - 1) {
-            $file_extension = preg_replace('#\?.*#', '', pathinfo($file_name, PATHINFO_EXTENSION));
-            $unique_file_name = Uuid::uuid4() . '.' . $file_extension;
+        /**
+         * @link https://gist.github.com/philBrown/880506
+         * @link https://stackoverflow.com/questions/27350770/crop-center-square-of-image-using-imagecopyresampled/27351634
+         */
 
-            $rename = rename(
-                $upload_dir . $file_name . '.tmp',
-                $gallery_dir . $unique_file_name
-            );
+        $this->MakeThumb($gallery_dir . $unique_file_name, 200, 200, $gallery_dir . '200x200_' . $unique_file_name);
+        $this->MakeThumb($gallery_dir . $unique_file_name, 400, 400, $gallery_dir . '400x400_' . $unique_file_name);
 
-            /**
-             * @link https://gist.github.com/philBrown/880506
-             * @link https://stackoverflow.com/questions/27350770/crop-center-square-of-image-using-imagecopyresampled/27351634
-             */
-
-            $this->MakeThumb($gallery_dir . $unique_file_name, 200, 200, $gallery_dir . '200x200_' . $unique_file_name);
-            $this->MakeThumb($gallery_dir . $unique_file_name, 400, 400, $gallery_dir . '400x400_' . $unique_file_name);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist(new Image($unique_file_name));
-            $entityManager->flush();
-        }
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist(new Image($unique_file_name));
+        $entityManager->flush();
 
         return new Response();
     }
