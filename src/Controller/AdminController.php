@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Image;
-use Ramsey\Uuid\Uuid;
 use Safe\Exceptions\FilesystemException;
 use Safe\Exceptions\PcreException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,8 +12,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
-use function \Safe\{fopen,fclose,glob,unlink,preg_replace,touch,chmod,fwrite};
+use function Safe\{chmod, fclose, fopen, fwrite, glob, preg_replace, touch, unlink};
 
 final class AdminController extends AbstractController
 {
@@ -54,15 +52,7 @@ final class AdminController extends AbstractController
 
         $tmpFile = fopen($newFile, 'ab');
         foreach (glob($uploadDir . "/*_" . md5($filename)) as $filepath) {
-
-            $blob = fopen($filepath, 'rb');
-
-            $buff = fread($blob, 4096);
-            while ($buff) {
-                fwrite($tmpFile, $buff);
-            }
-
-            fclose($blob);
+            fwrite($tmpFile, \Safe\file_get_contents($filepath));
             unlink($filepath);
         }
 
